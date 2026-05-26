@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Director;
+use Illuminate\Http\Request;
 
 class DirectorController extends Controller
 {
@@ -33,7 +33,7 @@ class DirectorController extends Controller
             $tableData[$director->id] = [
                 $director->name,
                 $director->surname,
-                $director->birthdate
+                $director->birthdate,
             ];
         }
 
@@ -75,7 +75,7 @@ class DirectorController extends Controller
         ]);
 
         // Creamos un nuevo director
-        $director = new Director();
+        $director = new Director;
         $director->name = $validated['name'];
         $director->surname = $validated['surname'];
         $director->birthdate = $validated['birthdate'] ?? null;
@@ -119,7 +119,7 @@ class DirectorController extends Controller
             $tableData[$film->id] = [
                 $film->title,
                 $film->sinopsis,
-                $film->duration
+                $film->duration,
             ];
         }
 
@@ -181,7 +181,7 @@ class DirectorController extends Controller
         if ($director->films()->exists()) {
             if (request()->is('api/*')) {
                 return response()->json([
-                    'message' => 'No se puede eliminar el director porque tiene películas asociadas'
+                    'message' => 'No se puede eliminar el director porque tiene películas asociadas',
                 ], 409);
             }
 
@@ -192,7 +192,7 @@ class DirectorController extends Controller
 
         if (request()->is('api/*')) {
             return response()->json([
-                'message' => 'Director eliminado correctamente'
+                'message' => 'Director eliminado correctamente',
             ]);
         }
 

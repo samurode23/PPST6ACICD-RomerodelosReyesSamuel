@@ -1,0 +1,100 @@
+name: CD
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  docker:
+    name: Build and Push Docker image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar código
+        uses: actions/checkout@v4
+
+      - name: Preparar nombre de imagen en minúsculas
+        run: echo "IMAGE_NAME=ghcr.io/$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
+      - name: Iniciar sesión en GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Construir imagen Docker
+        run: |
+          docker build \
+            -t $IMAGE_NAME:${{ github.sha }} \
+            -t $IMAGE_NAME:latest .
+
+      - name: Ejecutar contenedor para smoke test
+        run: |
+          docker run -d \
+            --name peliculapp-smoke \
+            -p 8000:8000 \
+            $IMAGE_NAME:${{ github.sha }} \
+            sh -c "
+              cp .env.example .env &&
+              echo 'APP_ENV=testing' >> .env &&
+              echo 'APP_DEBUG=true' >> .env &&
+              echo 'APP_KEY=base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=' >> .env &&
+              echo 'JWT_SECRET=test-secret-key-for-ci-only-12345678901234567890' >> .env &&
+              echo 'JWT_TTL=60' >> .env &&
+              echo 'DB_CONNECTION=sqlite' >> .env &&
+              echo 'DB_DATABASE=/tmp/database.sqlite' >> .env &&
+              echo 'CACHE_STORE=array' >> .env &&
+              echo 'SESSION_DRIVER=array' >> .env &&
+              echo 'QUEUE_CONNECTION=sync' >> .env &&
+              echo 'MAIL_MAILER=array' >> .env &&
+              php artisan optimize:clear &&
+              touch /tmp/database.sqlite &&
+              php artisan serve --host=0.0.0.0 --port=8000
+            "
+
+      - name: Preparar base de datos del contenedor
+        run: |
+          sleep 10
+          docker logs peliculapp-smoke
+          docker exec peliculapp-smoke php artisan migrate --force
+          docker exec peliculapp-smoke php artisan tinker --execute="\App\Models\User::factory()->create(['email' => 'usuario@example.com', 'password' => \Illuminate\Support\Facades\Hash::make('password')]);"
+
+      - name: Comprobar configuracion JWT dentro del contenedor
+        run: |
+          docker exec peliculapp-smoke php artisan tinker --execute="echo 'JWT secret length: '.strlen((string) config('jwt.secret')).PHP_EOL;"
+          docker exec peliculapp-smoke php artisan tinker --execute="echo auth('api')->attempt(['email' => 'usuario@example.com', 'password' => 'password']) ? 'LOGIN_OK'.PHP_EOL : 'LOGIN_FAIL'.PHP_EOL;"
+
+      - name: Comprobar rutas API
+        run: |
+          docker exec peliculapp-smoke php artisan route:list --path=api
+          docker exec peliculapp-smoke php artisan route:list --path=api/auth/login
+
+      - name: Smoke test del login
+        run: |
+          RESPONSE_CODE=$(curl -sS -o response.txt -w "%{http_code}" -X POST http://127.0.0.1:8000/api/auth/login \
+            -H "Content-Type: application/json" \
+            -H "Accept: application/json" \
+            -d '{"email":"usuario@example.com","password":"password"}')
+
+          echo "Código HTTP recibido: $RESPONSE_CODE"
+          echo "Respuesta:"
+          cat response.txt
+
+          test "$RESPONSE_CODE" = "200"
+
+      - name: Publicar imagen en GHCR
+        run: |
+          docker push $IMAGE_NAME:${{ github.sha }}
+          docker push $IMAGE_NAME:latest
+
+      - name: Detener contenedor
+        if: always()
+        run: docker rm -f peliculapp-smoke || true

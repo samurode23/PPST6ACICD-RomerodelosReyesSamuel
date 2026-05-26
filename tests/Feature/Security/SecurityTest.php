@@ -54,7 +54,7 @@ test('token expirado devuelve 401', function () use ($crearTokenJwtExpirado) {
 
     $this->withExceptionHandling();
 
-    $response = $this->withHeader('Authorization', 'Bearer ' . $token)
+    $response = $this->withHeader('Authorization', 'Bearer '.$token)
         ->getJson('/api/auth/me');
 
     $response->assertStatus(401)
@@ -82,7 +82,7 @@ test('password no aparece en respuesta me', function () {
 
     $token = auth('api')->login($user);
 
-    $response = $this->withHeader('Authorization', 'Bearer ' . $token)
+    $response = $this->withHeader('Authorization', 'Bearer '.$token)
         ->getJson('/api/auth/me');
 
     $response->assertStatus(200)

@@ -1,0 +1,27 @@
+{
+  "name": "Laravel JWT CI/CD",
+  "image": "mcr.microsoft.com/devcontainers/php:8.4",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "bmewburn.vscode-intelephense-client",
+        "amiralizadeh9480.laravel-extra-intellisense",
+        "ms-azuretools.vscode-docker",
+        "eamodio.gitlens"
+      ]
+    }
+  },
+
+  "postCreateCommand": "composer install && cp .env.example .env && php artisan key:generate",
+
+  "remoteEnv": {
+    "APP_ENV": "local",
+    "DB_CONNECTION": "sqlite",
+    "DB_DATABASE": "database/database.sqlite",
+    "CACHE_STORE": "array",
+    "SESSION_DRIVER": "array",
+    "QUEUE_CONNECTION": "sync",
+    "MAIL_MAILER": "array"
+  }
+}

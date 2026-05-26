@@ -39,7 +39,7 @@ test('listar peliculas autenticado devuelve coleccion', function () use ($crearT
 
     $token = $crearTokenPelicula();
 
-    $response = $this->withHeader('Authorization', 'Bearer ' . $token)
+    $response = $this->withHeader('Authorization', 'Bearer '.$token)
         ->getJson('/api/peliculas');
 
     $response->assertStatus(200)
@@ -54,7 +54,7 @@ test('crear pelicula asociada a director existente', function () use ($crearToke
 
     $token = $crearTokenPelicula();
 
-    $response = $this->withHeader('Authorization', 'Bearer ' . $token)
+    $response = $this->withHeader('Authorization', 'Bearer '.$token)
         ->postJson('/api/peliculas', [
             'title' => 'Interstellar',
             'sinopsis' => 'Viaje espacial',
@@ -81,7 +81,7 @@ test('crear pelicula asociada a director existente', function () use ($crearToke
 test('crear pelicula con director inexistente devuelve 422', function () use ($crearTokenPelicula) {
     $token = $crearTokenPelicula();
 
-    $response = $this->withHeader('Authorization', 'Bearer ' . $token)
+    $response = $this->withHeader('Authorization', 'Bearer '.$token)
         ->postJson('/api/peliculas', [
             'title' => 'Pelicula Sin Director',
             'sinopsis' => 'No debe guardarse',
@@ -109,8 +109,8 @@ test('actualizar pelicula', function () use ($crearTokenPelicula, $crearDirector
 
     $token = $crearTokenPelicula();
 
-    $response = $this->withHeader('Authorization', 'Bearer ' . $token)
-        ->putJson('/api/peliculas/' . $pelicula->id, [
+    $response = $this->withHeader('Authorization', 'Bearer '.$token)
+        ->putJson('/api/peliculas/'.$pelicula->id, [
             'title' => 'Titulo Nuevo',
             'sinopsis' => 'Sinopsis nueva',
             'release_date' => '2020-01-01',
@@ -149,8 +149,8 @@ test('eliminar pelicula', function () use ($crearTokenPelicula, $crearDirectorPe
 
     $token = $crearTokenPelicula();
 
-    $response = $this->withHeader('Authorization', 'Bearer ' . $token)
-        ->deleteJson('/api/peliculas/' . $pelicula->id);
+    $response = $this->withHeader('Authorization', 'Bearer '.$token)
+        ->deleteJson('/api/peliculas/'.$pelicula->id);
 
     expect($response->status())->toBeIn([200, 204]);
 
@@ -173,8 +173,8 @@ test('mostrar pelicula incluye datos del director', function () use ($crearToken
 
     $token = $crearTokenPelicula();
 
-    $response = $this->withHeader('Authorization', 'Bearer ' . $token)
-        ->getJson('/api/peliculas/' . $pelicula->id);
+    $response = $this->withHeader('Authorization', 'Bearer '.$token)
+        ->getJson('/api/peliculas/'.$pelicula->id);
 
     $response->assertStatus(200)
         ->assertJsonFragment([
