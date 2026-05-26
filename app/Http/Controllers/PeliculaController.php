@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Film;
+use Illuminate\Http\Request;
 
 class PeliculaController extends Controller
 {
@@ -93,7 +93,7 @@ class PeliculaController extends Controller
 
         // Devolvemos una respuesta JSON confirmando la eliminación
         return response()->json([
-            'message' => 'Película eliminada correctamente'
+            'message' => 'Película eliminada correctamente',
         ]);
     }
 }

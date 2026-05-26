@@ -3,6 +3,10 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\Exceptions\TokenExpiredException;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -15,26 +19,26 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->render(function (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e, \Illuminate\Http\Request $request) {
+        $exceptions->render(function (TokenExpiredException $e, Request $request) {
             if ($request->is('api/*')) {
                 return response()->json([
-                    'message' => 'Token expirado'
+                    'message' => 'Token expirado',
                 ], 401);
             }
         });
 
-        $exceptions->render(function (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e, \Illuminate\Http\Request $request) {
+        $exceptions->render(function (TokenInvalidException $e, Request $request) {
             if ($request->is('api/*')) {
                 return response()->json([
-                    'message' => 'Token inválido'
+                    'message' => 'Token inválido',
                 ], 401);
             }
         });
 
-        $exceptions->render(function (\Tymon\JWTAuth\Exceptions\JWTException $e, \Illuminate\Http\Request $request) {
+        $exceptions->render(function (JWTException $e, Request $request) {
             if ($request->is('api/*')) {
                 return response()->json([
-                    'message' => 'Token no proporcionado o no válido'
+                    'message' => 'Token no proporcionado o no válido',
                 ], 401);
             }
         });

@@ -60,11 +60,11 @@ test('logout invalida el token', function () {
 
     $token = $login->json('access_token');
 
-    $this->withHeader('Authorization', 'Bearer ' . $token)
+    $this->withHeader('Authorization', 'Bearer '.$token)
         ->postJson('/api/auth/logout')
         ->assertStatus(200);
 
-    $this->withHeader('Authorization', 'Bearer ' . $token)
+    $this->withHeader('Authorization', 'Bearer '.$token)
         ->getJson('/api/auth/me')
         ->assertStatus(401);
 });
@@ -82,7 +82,7 @@ test('refresh devuelve nuevo token valido', function () {
 
     $token = $login->json('access_token');
 
-    $refresh = $this->withHeader('Authorization', 'Bearer ' . $token)
+    $refresh = $this->withHeader('Authorization', 'Bearer '.$token)
         ->postJson('/api/auth/refresh');
 
     $refresh->assertStatus(200)
@@ -94,7 +94,7 @@ test('refresh devuelve nuevo token valido', function () {
 
     $newToken = $refresh->json('access_token');
 
-    $this->withHeader('Authorization', 'Bearer ' . $newToken)
+    $this->withHeader('Authorization', 'Bearer '.$newToken)
         ->getJson('/api/auth/me')
         ->assertStatus(200);
 });
@@ -112,7 +112,7 @@ test('me devuelve datos del usuario autenticado', function () {
 
     $token = $login->json('access_token');
 
-    $response = $this->withHeader('Authorization', 'Bearer ' . $token)
+    $response = $this->withHeader('Authorization', 'Bearer '.$token)
         ->getJson('/api/auth/me');
 
     $response->assertStatus(200)

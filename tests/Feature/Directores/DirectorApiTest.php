@@ -38,7 +38,7 @@ test('listar directores autenticado devuelve coleccion', function () use ($crear
 
     $token = $crearTokenDirector();
 
-    $response = $this->withHeader('Authorization', 'Bearer ' . $token)
+    $response = $this->withHeader('Authorization', 'Bearer '.$token)
         ->getJson('/api/directores');
 
     $response->assertStatus(200)
@@ -55,7 +55,7 @@ test('listar directores autenticado devuelve coleccion', function () use ($crear
 test('crear director con datos validos', function () use ($crearTokenDirector) {
     $token = $crearTokenDirector();
 
-    $response = $this->withHeader('Authorization', 'Bearer ' . $token)
+    $response = $this->withHeader('Authorization', 'Bearer '.$token)
         ->postJson('/api/directores', [
             'name' => 'Steven',
             'surname' => 'Spielberg',
@@ -77,7 +77,7 @@ test('crear director con datos validos', function () use ($crearTokenDirector) {
 test('crear director con datos invalidos devuelve 422', function () use ($crearTokenDirector) {
     $token = $crearTokenDirector();
 
-    $response = $this->withHeader('Authorization', 'Bearer ' . $token)
+    $response = $this->withHeader('Authorization', 'Bearer '.$token)
         ->postJson('/api/directores', [
             'name' => '',
             'surname' => '',
@@ -97,8 +97,8 @@ test('actualizar director existente', function () use ($crearTokenDirector) {
 
     $token = $crearTokenDirector();
 
-    $response = $this->withHeader('Authorization', 'Bearer ' . $token)
-        ->putJson('/api/directores/' . $director->id, [
+    $response = $this->withHeader('Authorization', 'Bearer '.$token)
+        ->putJson('/api/directores/'.$director->id, [
             'name' => 'Nombre Nuevo',
             'surname' => 'Apellido Nuevo',
             'birthdate' => '1980-05-10',
@@ -121,7 +121,7 @@ test('actualizar director existente', function () use ($crearTokenDirector) {
 test('actualizar director inexistente devuelve 404', function () use ($crearTokenDirector) {
     $token = $crearTokenDirector();
 
-    $response = $this->withHeader('Authorization', 'Bearer ' . $token)
+    $response = $this->withHeader('Authorization', 'Bearer '.$token)
         ->putJson('/api/directores/999999', [
             'name' => 'Director',
             'surname' => 'Inexistente',
@@ -141,8 +141,8 @@ test('eliminar director existente', function () use ($crearTokenDirector) {
 
     $token = $crearTokenDirector();
 
-    $response = $this->withHeader('Authorization', 'Bearer ' . $token)
-        ->deleteJson('/api/directores/' . $director->id);
+    $response = $this->withHeader('Authorization', 'Bearer '.$token)
+        ->deleteJson('/api/directores/'.$director->id);
 
     expect($response->status())->toBeIn([200, 204]);
 
@@ -169,8 +169,8 @@ test('eliminar director con peliculas asociadas devuelve 409', function () use (
 
     $token = $crearTokenDirector();
 
-    $response = $this->withHeader('Authorization', 'Bearer ' . $token)
-        ->deleteJson('/api/directores/' . $director->id);
+    $response = $this->withHeader('Authorization', 'Bearer '.$token)
+        ->deleteJson('/api/directores/'.$director->id);
 
     $response->assertStatus(409)
         ->assertJsonFragment([
