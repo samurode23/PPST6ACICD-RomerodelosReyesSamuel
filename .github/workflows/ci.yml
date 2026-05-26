@@ -20,7 +20,7 @@ jobs:
 
     steps:
       - name: Descargar código
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Configurar PHP
         uses: shivammathur/setup-php@v2
@@ -55,7 +55,7 @@ jobs:
 
     steps:
       - name: Descargar código
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Configurar PHP
         uses: shivammathur/setup-php@v2
@@ -83,7 +83,7 @@ jobs:
 
     steps:
       - name: Descargar código
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Construir imagen Docker
         run: docker build -t peliculapp:test .
@@ -98,7 +98,7 @@ jobs:
 
     steps:
       - name: Descargar código
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Configurar PHP
         uses: shivammathur/setup-php@v2
