@@ -1,4 +1,4 @@
-name: CD
+name: Fase 2 - Despliegue Continuo
 
 on:
   push:
